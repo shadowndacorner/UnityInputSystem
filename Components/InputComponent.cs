@@ -7,6 +7,14 @@ namespace InputSystem.Components
 {
     public class InputComponent : MonoBehaviour
     {
+        public virtual bool IsConnected
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public virtual InputType Type
         {
             get
@@ -28,6 +36,14 @@ namespace InputSystem.Components
             get
             {
                 return 0;
+            }
+        }
+
+        public virtual bool AnyRequiresEnabled
+        {
+            get
+            {
+                return false;
             }
         }
 

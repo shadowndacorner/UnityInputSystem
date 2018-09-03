@@ -11,6 +11,14 @@ namespace InputSystem.Components
 {
     public class KeyboardInputComponent : InputComponent
     {
+        public override bool IsConnected
+        {
+            get
+            {
+                return UInp.mousePresent;   // if a mouse isn't present, we can assume that kbm isn't supported
+            }
+        }
+
         public override int AnyPriority
         {
             get
@@ -18,6 +26,8 @@ namespace InputSystem.Components
                 return int.MaxValue;
             }
         }
+
+        public override bool AnyRequiresEnabled => false;
 
         public override InputType Type
         {

@@ -21,11 +21,13 @@ public class AnyInputComponent : InputComponent
         {
             if (type != typeof(InputComponent) && type != typeof(AnyInputComponent) && typeof(InputComponent).IsAssignableFrom(type))
             {
-                var go = new GameObject("_input");
+                var go = new GameObject("AnyInput_" + type.Name);
                 go.transform.parent = transform;
+                go.hideFlags = HideFlags.DontSave;
 
                 var inp = go.AddComponent(type) as InputComponent;
                 inp.SetupAny();
+                inp.gameObject.SetActive(inp.AnyRequiresEnabled);
                 Drivers.Add(inp);
             }
         }

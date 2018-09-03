@@ -10,6 +10,14 @@ namespace InputSystem.Components
 {
     public class XboxControllerInput : InputComponent
     {
+        public override bool IsConnected
+        {
+            get
+            {
+                return ValidController && GamepadHelper.GamepadConnected(PlayerIndex);
+            }
+        }
+
         public override InputType Type
         {
             get
@@ -25,6 +33,8 @@ namespace InputSystem.Components
                 return ValidController && GamepadHelper.AnyInput(PlayerIndex);
             }
         }
+
+        public override bool AnyRequiresEnabled => true;
 
         public override void SetupAny()
         {
