@@ -431,7 +431,19 @@ namespace InputSystem.XboxGamepad
 
         public static void SetVibration(int index, float left, float right)
         {
+#if UNITY_WINRT && !UNITY_EDITOR
+            if(index < Gamepad.Gamepads.Count && index >= 0)
+            {
+                var vib = Gamepad.Gamepads[index].Vibration;
+                vib.LeftMotor = left;
+                vib.LeftTrigger = left;
+                vib.RightMotor = right;
+                vib.RightTrigger = right;
+                Gamepad.Gamepads[index].Vibration = vib;
+            }
+#else
             GamePad.SetVibration((PlayerIndex)index, left, right);
+#endif
         }
 
         // This runs once per frame on the main thread
