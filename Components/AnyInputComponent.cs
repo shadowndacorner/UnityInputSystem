@@ -43,10 +43,10 @@ public class AnyInputComponent : InputComponent
         }
     }
 
-    public override bool GetButton(Keybind bind)
+    public override bool GetButtonHeld(Keybind bind)
     {
         if (ActiveDriver)
-            return ActiveDriver.GetButton(bind);
+            return ActiveDriver.GetButtonHeld(bind);
 
         return false;
     }

@@ -59,14 +59,14 @@ namespace InputSystem.Components
             return 0;
         }
 
-        public virtual bool GetButton(Keybind bind)
+        public virtual bool GetButtonHeld(Keybind bind)
         {
             return false;
         }
 
         public virtual bool GetButtonPressed(Keybind bind)
         {
-            return GetButton(bind);
+            return GetButtonHeld(bind);
         }
 
         public virtual bool GetButtonReleased(Keybind bind)

@@ -53,7 +53,7 @@ namespace InputSystem.Components
             }
         }
 
-        public override bool GetButton(Keybind bind)
+        public override bool GetButtonHeld(Keybind bind)
         {
             if (bind.HasBinding(InputType.KeyboardMouse))
             {
@@ -138,7 +138,7 @@ namespace InputSystem.Components
             {
                 return UInp.mouseScrollDelta.y;
             }
-            return GetButton(_bind) ? 1 : 0;
+            return GetButtonHeld(_bind) ? 1 : 0;
         }
     }
 }

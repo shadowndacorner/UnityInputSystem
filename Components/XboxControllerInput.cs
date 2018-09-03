@@ -55,7 +55,7 @@ namespace InputSystem.Components
             }
         }
 
-        public override bool GetButton(Keybind bind)
+        public override bool GetButtonHeld(Keybind bind)
         {
             if (!ValidController || !bind.Xbox.Valid)
                 return false;
