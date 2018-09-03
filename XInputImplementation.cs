@@ -6,9 +6,124 @@ using System.Text;
 using System.Threading.Tasks;
 using InputSystem.Keybinds;
 using InputSystem.XboxGamepad;
-
-//#if UNITY_WINRT && !UNITY_EDITOR && false
 using XInputDotNetPure;
+
+#if UNITY_WINRT && !UNITY_EDITOR
+using Windows.Gaming.Input;
+
+namespace InputSystem.XboxGamepad
+{
+    public static class XInputWindowsGamepadAdapter
+    {
+        static XInputWindowsGamepadAdapter()
+        {
+            Debug.LogError("Initializing");
+            Gamepad.GamepadAdded += Gamepad_GamepadAdded;
+            Gamepad.GamepadRemoved += Gamepad_GamepadRemoved;
+        }
+
+        static HashSet<Gamepad> _pads = new HashSet<Gamepad>();
+        private static void Gamepad_GamepadAdded(object sender, Gamepad pad)
+        {
+            if (_pads.Contains(pad))
+            {
+                Debug.LogError("PREEXISTING PAD");
+            }
+            else
+            {
+                _pads.Add(pad);
+            }
+
+            Debug.LogError("Gamepad added");
+            pad.HeadsetConnected += Pad_HeadsetConnected;
+            pad.HeadsetDisconnected += Pad_HeadsetDisconnected;
+            pad.UserChanged += Pad_UserChanged;
+        }
+
+        private static void Gamepad_GamepadRemoved(object sender, Gamepad pad)
+        {
+            Debug.LogError("Gamepad removed");
+            pad.HeadsetConnected -= Pad_HeadsetConnected;
+            pad.HeadsetDisconnected -= Pad_HeadsetDisconnected;
+            pad.UserChanged -= Pad_UserChanged;
+        }
+
+        private static void Pad_UserChanged(IGameController sender, Windows.System.UserChangedEventArgs args)
+        {
+            Debug.Log("user changed");
+        }
+
+        private static void Pad_HeadsetConnected(IGameController sender, Headset args)
+        {
+            Debug.Log("headset connected");
+        }
+
+        private static void Pad_HeadsetDisconnected(IGameController sender, Headset args)
+        {
+            Debug.Log("headset disconnected");
+        }
+
+        private static ButtonState ButtonPressed(this GamepadReading reading, GamepadButtons btn)
+        {
+            return (((int)reading.Buttons & (int)btn) != 0) ? ButtonState.Pressed : ButtonState.Released;
+        }
+
+        public static GamePadState ConvertWin10ToGamepadState(Gamepad pad)
+        {
+            var reading = pad.GetCurrentReading();
+            var buttons = new GamePadButtons(
+                reading.ButtonPressed(GamepadButtons.Menu),
+                reading.ButtonPressed(GamepadButtons.View),
+                reading.ButtonPressed(GamepadButtons.LeftThumbstick),
+                reading.ButtonPressed(GamepadButtons.RightThumbstick),
+                reading.ButtonPressed(GamepadButtons.LeftShoulder),
+                reading.ButtonPressed(GamepadButtons.RightShoulder),
+                ButtonState.Released,
+                reading.ButtonPressed(GamepadButtons.A),
+                reading.ButtonPressed(GamepadButtons.B),
+                reading.ButtonPressed(GamepadButtons.X),
+                reading.ButtonPressed(GamepadButtons.Y));
+
+            var dpad = new GamePadDPad(
+                reading.ButtonPressed(GamepadButtons.DPadUp),
+                reading.ButtonPressed(GamepadButtons.DPadDown),
+                reading.ButtonPressed(GamepadButtons.DPadLeft),
+                reading.ButtonPressed(GamepadButtons.DPadRight));
+
+            float leftx = (float)reading.LeftThumbstickX;
+            float lefty = (float)reading.LeftThumbstickY;
+            float rightx = (float)reading.RightThumbstickX;
+            float righty = (float)reading.RightThumbstickY;
+
+            const float deadzone = 0.1f;
+            if (Mathf.Abs(leftx) < deadzone)
+                leftx = 0;
+
+            if (Mathf.Abs(lefty) < deadzone)
+                lefty = 0;
+
+            if (Mathf.Abs(rightx) < deadzone)
+                rightx = 0;
+
+            if (Mathf.Abs(righty) < deadzone)
+                righty= 0;
+
+            var sticks = new GamePadThumbSticks(
+                new GamePadThumbSticks.StickValue(leftx, lefty),
+                new GamePadThumbSticks.StickValue(rightx, righty)
+            );
+
+            var triggers = new GamePadTriggers(
+                (float)reading.LeftTrigger,
+                (float)reading.RightTrigger
+            );
+
+            return new GamePadState(true, 0, buttons, dpad, sticks, triggers);
+        }
+    }
+}
+#endif
+
 namespace InputSystem.XboxGamepad
 {
     public enum XboxButton
@@ -78,6 +193,28 @@ namespace InputSystem.XboxGamepad
 
     public static class GamepadHelper
     {
+        private static GamePadState _internalGetState(int index)
+        {
+#if UNITY_WINRT && !UNITY_EDITOR
+            try
+            {
+                if (index < Gamepad.Gamepads.Count && index >= 0)
+                {
+                    var pad = Gamepad.Gamepads[index];
+                    return XInputWindowsGamepadAdapter.ConvertWin10ToGamepadState(pad);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
+            return new GamePadState(false, 0, new GamePadButtons(), new GamePadDPad(), new GamePadThumbSticks(), new GamePadTriggers());
+#else
+            return GamePad.GetState((PlayerIndex)index);
+#endif
+        }
+
         struct GamepadUpdateState
         {
             public GamePadState state;
@@ -163,7 +300,7 @@ namespace InputSystem.XboxGamepad
 
         public static Vector2 GetGamepadStick(GamePadState state, XboxStick stick)
         {
-            switch(stick)
+            switch (stick)
             {
                 case XboxStick.LeftStick:
                     return new Vector2(state.ThumbSticks.Left.X, state.ThumbSticks.Left.Y);
@@ -189,25 +326,25 @@ namespace InputSystem.XboxGamepad
             throw new InvalidOperationException("Attempted to read invalid trigger " + trigger);
         }
 
-        public static void UpdateState(int index)
+        private static void UpdateState(int index)
         {
             var st = States[index];
             if (st.lastFrame != Time.frameCount)
             {
                 PrevStates[index] = st.state;
-                st.state = GamePad.GetState((PlayerIndex)index);
+                st.state = _internalGetState(index);
                 st.lastFrame = Time.frameCount;
                 States[index] = st;
             }
         }
 
-        public static GamePadState GetLastState(int index)
+        private static GamePadState GetLastState(int index)
         {
             UpdateState(index);
             return PrevStates[index];
         }
 
-        public static GamePadState GetState(int index)
+        private static GamePadState GetState(int index)
         {
             UpdateState(index);
             return States[index].state;
@@ -220,7 +357,7 @@ namespace InputSystem.XboxGamepad
 
         public static bool AnyInput(int index)
         {
-            for(int i = 0; i < (int)XboxButton.Count; ++i)
+            for (int i = 0; i < (int)XboxButton.Count; ++i)
             {
                 if (GetGamepadButtonHeld(index, (XboxButton)i))
                 {
@@ -304,7 +441,7 @@ namespace InputSystem.XboxGamepad
         // stale data
         public static void Update()
         {
-            for(int i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 UpdateState(i);
             }

@@ -88,7 +88,6 @@ namespace InputSystem.Components
 
             if (bind.IsMouseLook)
             {
-                Debug.Log("reading mouse");
                 return MouseMove;
             }
             else if (bind.IsScrollWheel)

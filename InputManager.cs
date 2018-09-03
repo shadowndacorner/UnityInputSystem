@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InputSystem.Keybinds;
+using System.Reflection;
 
 namespace InputSystem
 {
@@ -28,9 +29,9 @@ namespace InputSystem
         private static void InitializeBindings()
         {
             // Load keybindings
-            foreach (var type in typeof(Input).Assembly.ExportedTypes)
+            foreach (var type in typeof(Input).GetTypeInfo().Assembly.ExportedTypes)
             {
-                foreach (var method in type.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic))
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     foreach (var v in method.GetCustomAttributes(typeof(Attributes.BindingGenerationMethodAttribute), false))
                     {

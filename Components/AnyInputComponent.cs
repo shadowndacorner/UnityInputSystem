@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using InputSystem.Components;
 using InputSystem;
 using InputSystem.Keybinds;
+using System.Reflection;
 
 public class AnyInputComponent : InputComponent
 {
@@ -17,7 +18,7 @@ public class AnyInputComponent : InputComponent
 
     private void OnEnable()
     {
-        foreach (var type in typeof(InputComponent).Assembly.ExportedTypes)
+        foreach (var type in typeof(InputComponent).GetTypeInfo().Assembly.ExportedTypes)
         {
             if (type != typeof(InputComponent) && type != typeof(AnyInputComponent) && typeof(InputComponent).IsAssignableFrom(type))
             {
