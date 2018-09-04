@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using InputSystem.Keybinds;
+using System;
 
 namespace InputSystem.Components
 {
@@ -74,9 +75,6 @@ namespace InputSystem.Components
             return false;
         }
 
-        public virtual void Vibrate(float amount, float left, float right, float duration = 0)
-        {
-
-        }
+        public virtual void Vibrate(float amount, float left, float right, float duration = 0) { }
     }
 }

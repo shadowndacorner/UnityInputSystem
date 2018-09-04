@@ -17,24 +17,12 @@ namespace InputSystem.XboxGamepad
     {
         static XInputWindowsGamepadAdapter()
         {
-            Debug.LogError("Initializing");
             Gamepad.GamepadAdded += Gamepad_GamepadAdded;
             Gamepad.GamepadRemoved += Gamepad_GamepadRemoved;
         }
 
-        static HashSet<Gamepad> _pads = new HashSet<Gamepad>();
         private static void Gamepad_GamepadAdded(object sender, Gamepad pad)
         {
-            if (_pads.Contains(pad))
-            {
-                Debug.LogError("PREEXISTING PAD");
-            }
-            else
-            {
-                _pads.Add(pad);
-            }
-
-            Debug.LogError("Gamepad added");
             pad.HeadsetConnected += Pad_HeadsetConnected;
             pad.HeadsetDisconnected += Pad_HeadsetDisconnected;
             pad.UserChanged += Pad_UserChanged;
@@ -42,7 +30,6 @@ namespace InputSystem.XboxGamepad
 
         private static void Gamepad_GamepadRemoved(object sender, Gamepad pad)
         {
-            Debug.LogError("Gamepad removed");
             pad.HeadsetConnected -= Pad_HeadsetConnected;
             pad.HeadsetDisconnected -= Pad_HeadsetDisconnected;
             pad.UserChanged -= Pad_UserChanged;
@@ -285,7 +272,7 @@ namespace InputSystem.XboxGamepad
                 case XboxButton.RightStick:
                     return state.Buttons.RightStick == ButtonState.Pressed;
                 case XboxButton.RightTrigger:
-                    return Mathf.Abs(state.Triggers.Left) > triggerDeadZone;
+                    return Mathf.Abs(state.Triggers.Right) > triggerDeadZone;
                 case XboxButton.Start:
                     return state.Buttons.Start == ButtonState.Pressed;
                 case XboxButton.X:

@@ -133,50 +133,5 @@ namespace InputSystem.Components
                     PlayerIndex = -1;
             }
         }
-
-#if UNITY_WINRT
-        private void OnGUI()
-        {
-            GUI.Box(new Rect(0, 0, 1000, 1000), GUIContent.none);
-            GUILayout.BeginArea(new Rect(0, 0, 1000, 1000));
-            GUILayout.Label(Time.realtimeSinceStartup.ToString());
-            /*
-#if !UNITY_EDITOR
-            
-            GUILayout.Label("Controllers Connected: " + Windows.Gaming.Input.Gamepad.Gamepads.Count);
-            foreach(var v in Windows.Gaming.Input.Gamepad.Gamepads)
-            {
-                GUILayout.Label(v.ToString());
-                var read = v.GetCurrentReading();
-                foreach(var field in read.GetType().GetTypeInfo().DeclaredFields)
-                {
-                    var val = field.GetValue(read);
-                    if (val == null)
-                    {
-                        GUILayout.Label(field.Name + ": null");
-                    }
-                    else
-                    {
-                        GUILayout.Label(field.Name + ": " + val.ToString());
-                    }
-                }
-                GUILayout.Space(10);
-            }
-#endif
-            for (int i = 0; i < 4; ++i)
-            {
-                if (GamepadHelper.GamepadConnected(i))
-                {
-                    GUILayout.Label("Gamepad " + i + " connected");
-                }
-                else
-                {
-                    GUILayout.Label("Gamepad " + i + " disconnected");
-                }
-            }
-            */
-            GUILayout.EndArea();
-        }
-#endif
-        }
+    }
 }

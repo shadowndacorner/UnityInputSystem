@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using InputSystem.Components;
 using InputSystem;
 using InputSystem.Keybinds;
@@ -10,8 +9,8 @@ using System.Reflection;
 
 public class AnyInputComponent : InputComponent
 {
-    public override bool AnyInput => base.AnyInput;
-    public override InputType Type => base.Type;
+    public override bool AnyInput { get { return ActiveDriver && ActiveDriver.AnyInput; } }
+    public override InputType Type { get { return ActiveDriver ? ActiveDriver.Type : InputType.Invalid; } }
 
     public InputComponent ActiveDriver;
     public List<InputComponent> Drivers = new List<InputComponent>();
@@ -40,8 +39,12 @@ public class AnyInputComponent : InputComponent
     {
         foreach (var v in Drivers)
         {
-            Destroy(v.gameObject);
+            if (v)
+            {
+                Destroy(v.gameObject);
+            }
         }
+        Drivers.Clear();
     }
 
     public override bool GetButtonHeld(Keybind bind)
