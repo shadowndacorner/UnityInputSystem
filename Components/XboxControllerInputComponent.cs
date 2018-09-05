@@ -54,7 +54,7 @@ namespace InputSystem.Components
         {
             get
             {
-                return PlayerIndex >= 0 && PlayerIndex < 4;
+                return PlayerIndex >= 0 && PlayerIndex < GamepadHelper.GamepadCount;
             }
         }
 
@@ -117,7 +117,7 @@ namespace InputSystem.Components
         {
             if (AnyController)
             {
-                for (int i = 0; i < 4; ++i)
+                for (int i = 0; i < GamepadHelper.GamepadCount; ++i)
                 {
                     if (!GamepadHelper.GamepadConnected(i))
                         continue;

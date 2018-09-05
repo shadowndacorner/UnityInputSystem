@@ -216,7 +216,7 @@ namespace InputSystem.XboxGamepad
                 if (_states == null)
                 {
                     _states = new List<GamepadUpdateState>();
-                    for (int i = 0; i < 4; ++i)
+                    for (int i = 0; i < GamepadHelper.GamepadCount; ++i)
                     {
                         _states.Add(default(GamepadUpdateState));
                     }
@@ -243,7 +243,19 @@ namespace InputSystem.XboxGamepad
         }
 
         private const float triggerDeadZone = 0.01f;
-        public static bool GetGamepadButtonHeld(GamePadState state, XboxButton btn)
+        public static int GamepadCount
+        {
+            get
+            {
+#if UNITY_WINRT && !UNITY_EDITOR
+                return Gamepad.Gamepads.Count;
+#else
+                return GamePad.Count;
+#endif
+            }
+        }
+
+        private static bool GetGamepadButtonHeld(GamePadState state, XboxButton btn)
         {
             switch (btn)
             {
@@ -413,7 +425,7 @@ namespace InputSystem.XboxGamepad
 
         public static bool GamepadConnected(int index)
         {
-            return index >= 4 || index < 0 || GetState(index).IsConnected;
+            return (index <= GamepadCount && index >= 0) && GetState(index).IsConnected;
         }
 
         public static void SetVibration(int index, float left, float right)
@@ -440,7 +452,26 @@ namespace InputSystem.XboxGamepad
         // stale data
         public static void Update()
         {
-            for (int i = 0; i < 4; ++i)
+#if !UNITY_WINRT || UNITY_EDITOR
+            // If we're on the windows store, then we're using
+            // Windows.Gaming.Input rather than SDL.
+            int cnt = GamepadHelper.GamepadCount;
+            GamePad.Update();
+            int nCnt = GamepadHelper.GamepadCount;
+            if (nCnt > cnt)
+            {
+                while (PrevStates.Count < nCnt)
+                {
+                    PrevStates.Add(default(GamePadState));
+                }
+                while (States.Count < nCnt)
+                {
+                    States.Add(default(GamepadUpdateState));
+                }
+            }
+#endif
+
+            for (int i = 0; i < GamepadHelper.GamepadCount; ++i)
             {
                 UpdateState(i);
             }
