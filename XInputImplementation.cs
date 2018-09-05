@@ -327,6 +327,20 @@ namespace InputSystem.XboxGamepad
 
         private static void UpdateState(int index)
         {
+            int cnt = States.Count;
+            int nCnt = GamepadHelper.GamepadCount;
+            if (nCnt > cnt)
+            {
+                while (PrevStates.Count < nCnt)
+                {
+                    PrevStates.Add(default(GamePadState));
+                }
+                while (States.Count < nCnt)
+                {
+                    States.Add(default(GamepadUpdateState));
+                }
+            }
+
             var st = States[index];
             if (st.lastFrame != Time.frameCount)
             {
@@ -455,20 +469,7 @@ namespace InputSystem.XboxGamepad
 #if !UNITY_WINRT || UNITY_EDITOR
             // If we're on the windows store, then we're using
             // Windows.Gaming.Input rather than SDL.
-            int cnt = GamepadHelper.GamepadCount;
             GamePad.Update();
-            int nCnt = GamepadHelper.GamepadCount;
-            if (nCnt > cnt)
-            {
-                while (PrevStates.Count < nCnt)
-                {
-                    PrevStates.Add(default(GamePadState));
-                }
-                while (States.Count < nCnt)
-                {
-                    States.Add(default(GamepadUpdateState));
-                }
-            }
 #endif
 
             for (int i = 0; i < GamepadHelper.GamepadCount; ++i)
