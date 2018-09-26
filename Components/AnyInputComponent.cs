@@ -13,10 +13,12 @@ public class AnyInputComponent : InputComponent
     public override InputType Type { get { return ActiveDriver ? ActiveDriver.Type : InputType.Invalid; } }
 
     public InputComponent ActiveDriver;
+
     public List<InputComponent> Drivers = new List<InputComponent>();
 
     private void OnEnable()
     {
+        Drivers.Clear();
         foreach (var type in typeof(InputComponent).GetTypeInfo().Assembly.ExportedTypes)
         {
             if (type != typeof(InputComponent) && type != typeof(AnyInputComponent) && typeof(InputComponent).IsAssignableFrom(type))
