@@ -5,18 +5,11 @@ namespace XInputDotNetPure
 {
     class Imports
     {
-#if UNITY_WINDOWS
-        internal const string DLLName = "XInputInterface";
-
-        [DllImport(DLLName)]
-        public static extern uint XInputGamePadGetState(uint playerIndex, out GamePadState.RawState state);
-        [DllImport(DLLName)]
-        public static extern void XInputGamePadSetState(uint playerIndex, float leftMotor, float rightMotor);
-
-        public static void UInputUpdate() { }
-        public static uint UInputGamepadCount() { return 4; }
+#if UNITY_WEBGL && !UNITY_EDITOR
+        internal const string DLLName = "__Internal";
 #else
         internal const string DLLName = "uinput";
+#endif
 
         [DllImport(DLLName)]
         public static extern uint UInputGamePadGetState(uint playerIndex, out GamePadState.RawState state);
@@ -36,7 +29,6 @@ namespace XInputDotNetPure
         {
             UInputGamePadSetState(playerIndex, leftMotor, rightMotor);
         }
-#endif
     }
 
     public enum ButtonState
