@@ -8,6 +8,22 @@ namespace InputSystem.Components
 {
     public class InputComponent : MonoBehaviour
     {
+        [SerializeField]
+        private bool _shouldFreeze;
+        public virtual bool ShouldFreeze
+        {
+            get
+            {
+                if (Time.timeScale == 0)
+                    return true;
+                return _shouldFreeze;
+            }
+            set
+            {
+                _shouldFreeze = value;
+            }
+        }
+
         public virtual bool IsConnected
         {
             get
