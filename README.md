@@ -1,6 +1,6 @@
 # Unity Input System
 
-This is a custom input system for Unity with runtime rebindable keybindings and a very slick API.  It currently has support for keyboard/mouse (using Unity's builtin input), Xbox-like gamepads (via SDL_GameController), and Windows.Gaming.Input (for UWP).
+This is a custom input system for Unity with runtime rebindable keybindings and a very slick API.  It currently has support for keyboard/mouse (using Unity's builtin input) and Xbox-like gamepads (via SDL_GameController and Windows.Gaming.Input for UWP).
 
 ## Usage in Unity
 Currently, you can use KeyboardInputComponent, XboxControllerInputComponent, or AnyInputComponent.  AnyComponent will automatically swap between any supported input method.  This is very useful for singleplayer games.
@@ -11,8 +11,10 @@ Simply attach the desired input component to a game object, set up your keybindi
 
 Local multiplayer can be implemented by simply adding an XboxControllerInputComponent to each GameObject and setting PlayerIndex to the correct value (and adding a KeyboardInputComponent if that is to be supported).
 
-## Note
-This system uses a custom native layer ([available here](https://github.com/shadowndacorner/UnityInputSystemNative)) interacting with a slightly modified XInputDotNet to theoretically provide cross-platform gamepad support.  However, it has only actually been tested on Windows Desktop and UWP platforms, since those were the project's initial targets.  However, it should be pretty simple to build the native library for other platforms.
+## Note on Platform Support
+This system uses a custom native layer ([available here](https://github.com/shadowndacorner/UnityInputSystemNative)) interacting with a slightly modified XInputDotNet to provide cross-platform gamepad support for non-UWP platforms.  UWP uses the Windows.Gaming.Input library directly.
+
+The library has been tested on 64-bit Windows, UWP (including Xbox One), and Mac OSX.  However, it should be compatible with all platform supported by SDL_GameController and CMake.  Support for WebGL is planned.
 
 ## Example
 ```c#

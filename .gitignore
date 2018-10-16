@@ -1,1 +1,6 @@
-*.meta
+# Don't bother with metafiles for scripts
+/*.meta
+Xbox/*.meta
+Utilities/*.meta
+Components/*.meta
+Attributes/*.meta
