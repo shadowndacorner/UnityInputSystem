@@ -49,6 +49,22 @@ public class AnyInputComponent : InputComponent
         Drivers.Clear();
     }
 
+    public override bool HasBind(Keybind bind)
+    {
+        if (ActiveDriver)
+            return ActiveDriver.HasBind(bind);
+
+        return false;
+    }
+
+    public override bool IsBindAbsolute(Keybind bind)
+    {
+        if (ActiveDriver)
+            return ActiveDriver.IsBindAbsolute(bind);
+
+        return false;
+    }
+
     public override bool GetButtonHeld(Keybind bind)
     {
         if (ActiveDriver)

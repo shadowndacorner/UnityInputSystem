@@ -64,6 +64,16 @@ namespace InputSystem.Components
             }
         }
 
+        public virtual bool HasBind(Keybind bind)
+        {
+            return false;
+        }
+
+        public virtual bool IsBindAbsolute(Keybind bind)
+        {
+            return false;
+        }
+
         public virtual void SetupAny() { }
 
         public virtual Vector2 GetVector(Keybind bind)

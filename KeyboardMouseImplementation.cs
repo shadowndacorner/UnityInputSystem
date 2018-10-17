@@ -27,7 +27,7 @@ namespace InputSystem.KeyboardMouse
             return _bind;
         }
 
-        public static Keybind SetUseMouse(this Keybind _bind)
+        public static Keybind SetUseMouseLook(this Keybind _bind)
         {
             if (_bind.Type != BindType.Vector)
             {
@@ -36,6 +36,19 @@ namespace InputSystem.KeyboardMouse
 
             var bind = _bind.KBM;
             bind.IsMouseLook = true;
+            _bind.KBM = bind;
+            return _bind;
+        }
+
+        public static Keybind SetUseAbsoluteMousePosition(this Keybind _bind)
+        {
+            if (_bind.Type != BindType.Vector)
+            {
+                throw new InvalidOperationException("Attempted to set mouse for non vector input");
+            }
+
+            var bind = _bind.KBM;
+            bind.IsAbsoluteMousePosition = true;
             _bind.KBM = bind;
             return _bind;
         }
@@ -92,7 +105,8 @@ namespace InputSystem.Keybinds
         {
             None,
             Axis,
-            Scroll
+            Scroll,
+            AbsolutePosition
         }
 
         private MouseMode _mouse_mode;
@@ -189,6 +203,19 @@ namespace InputSystem.Keybinds
             {
                 _valid = true;
                 _mouse_mode = MouseMode.Scroll;
+            }
+        }
+
+        public bool IsAbsoluteMousePosition
+        {
+            get
+            {
+                return _mouse_mode == MouseMode.AbsolutePosition;
+            }
+            set
+            {
+                _valid = true;
+                _mouse_mode = MouseMode.AbsolutePosition;
             }
         }
     }

@@ -53,6 +53,21 @@ namespace InputSystem.Components
             }
         }
 
+        public override bool HasBind(Keybind bind)
+        {
+            return bind.HasBinding(InputType.KeyboardMouse);
+        }
+
+        public override bool IsBindAbsolute(Keybind bind)
+        {
+            if (bind.HasBinding(InputType.KeyboardMouse))
+            {
+                // Only absolute if using abs mouse pos
+                return bind.KBM.IsAbsoluteMousePosition;
+            }
+            return false;
+        }
+
         public override bool GetButtonHeld(Keybind bind)
         {
             if (bind.HasBinding(InputType.KeyboardMouse))
@@ -86,7 +101,11 @@ namespace InputSystem.Components
             if (!bind.Valid)
                 return Vector2.zero;
 
-            if (bind.IsMouseLook)
+            if (bind.IsAbsoluteMousePosition)
+            {
+                return UInp.mousePosition;
+            }
+            else if (bind.IsMouseLook)
             {
                 return MouseMove;
             }

@@ -37,6 +37,11 @@ namespace InputSystem.Components
             }
         }
 
+        public override bool HasBind(Keybind bind)
+        {
+            return bind.HasBinding(InputType.XboxGamepad);
+        }
+
         public override bool AnyRequiresEnabled => true;
 
         public override void SetupAny()
